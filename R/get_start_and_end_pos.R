@@ -1,0 +1,49 @@
+#' Determine positions over which to compute R2 and MAF
+#'
+#' @param dataset_list
+#' list of datasets formatted according to the requirements of coloc.abf with the following differences
+#' pos, and chr are additionally required.
+#' snp is ignored as it is determined by pos.
+#' imputation class either all or top
+#' top_pos giving the position of the top p-value
+#' @param window_size
+#' if NULL, window size is determined to cover all positions in dataset_list
+#' if specified, covers all positions in dataset list plus window_size around top SNP dataset
+#' @return
+#' start first position to fetch
+#' end last position to fetch
+#' @examples
+#' dataset_top_SNP <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2")
+#' dataset_top_SNP2 <- list(pos = 4, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=4, snp="4")
+#' dataset_full <- list(pos = c(4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8), chr= "Z", imputation_class = "all", top_pos = 4, snp="4")
+#' # Top SNP only window size NULL (not recommended)
+#' get_start_and_end_pos(list(dataset_top_SNP, dataset_top_SNP2), NULL)
+#' # Top SNP only, window size
+#' get_start_and_end_pos(list(dataset_top_SNP, dataset_top_SNP2), 2)
+#' # Top SNP and full window size NULL
+#' get_start_and_end_pos(list(dataset_top_SNP2, dataset_full), NULL)
+#' get_start_and_end_pos(list(dataset_top_SNP, dataset_full), NULL)
+#' # Top SNP and full, window size
+#' get_start_and_end_pos(list(dataset_top_SNP2, dataset_full), 2)
+#' get_start_and_end_pos(list(dataset_top_SNP, dataset_full), 2)
+#' # More complex example
+#' dataset_full2 <- list(pos = c(1, 2, 3, 4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 2 * 10^-4, 0.6, 0.03), chr= "Z", top_pos = 1, imputation_class = 'all', snp=as.character(1:5))
+#' dataset_top_SNP3 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", top_pos =2, imputation_class = 'top', snp='2', gds_file = "data/example.gds", subset = "data/subset.ped")
+#' dataset_top_SNP4 <- list(pos = 3, type= "quant", pvalues =2*10^-8, N = 350, chr = "Z", top_pos= 2, imputation_class = 'top', snp='3', gds_file = "data/example.gds", subset = 'data/subset2.ped')
+#' dataset_top_SNP5 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", top_pos =2, imputation_class = 'top', snp='2', gds_file = "data/example2.gds", subset = 'data/subset.ped')
+#' get_start_and_end_pos(list(dataset_full2, dataset_top_SNP3, dataset_top_SNP4, dataset_top_SNP5), window_size = 1)
+get_start_and_end_pos <- function(dataset_list, window_size) {
+  start_pos <- Inf
+  end_pos <- -Inf
+  imputation_class_list <- sapply(dataset_list, function(x) x$imputation_class)
+  for (i in 1:length(dataset_list)) {
+    if (imputation_class_list[i] == "all" | is.null(window_size)) {
+      start_pos <- min(start_pos, min(dataset_list[[i]]$pos))
+      end_pos <- max(end_pos, max(dataset_list[[i]]$pos))
+    } else {
+      start_pos <- max(min(c(start_pos, dataset_list[[i]]$pos - window_size)), 1)
+      end_pos <- max(c(end_pos, dataset_list[[i]]$pos + window_size))
+    }
+  }
+  return(list(start = start_pos, end = end_pos))
+}

@@ -1,0 +1,35 @@
+#' check if empty dataset
+#'
+#' @param dataset
+#' POEM_output format dataset
+#' Specifically this is a coloc format dataset with the following changes
+#' top_pos giving the position of the top p-value
+#' pos vector giving positions
+#' chr giving chromosome
+#' snp is mandatory
+#' MAF is mandatory
+#' imputation class that is either all or top
+#' Unlike coloc, length of pvalues or beta L is permitted to be zero
+#' @return
+#' TRUE or FALSE
+#' @examples
+#' # example with p-values that should be FALSE
+#' dataset_full <- list(pos = c(1, 2, 3, 4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 2 * 10^-4, 0.6, 0.03), chr= "Z", imputation_class = "all", top_pos = 1, snp = as.character(1:5))
+#' empty_dataset_check(dataset = dataset_full)
+#' # example with beta that should be FALSE
+#' dataset_full_beta_varbeta = dataset_full
+#' dataset_full_beta_varbeta$pvalues = NULL
+#' dataset_full_beta_varbeta$beta = c(0.5, 0.5, 0.4, 0.5, 0.26)
+#' dataset_full_beta_varbeta$varbeta = c(0.008, 0.008, 0.012, 0.01, 0.015)
+#' dataset_full_beta_varbeta$sdY = 1
+#' empty_dataset_check(dataset = dataset_full_beta_varbeta)
+#' # example with p-values that should be TRUE
+#' dataset_empty <- list(pos = integer(0), MAF = numeric(0), N=1000, type ="quant", pvalues = numeric(0), chr= "Z", imputation_class = "top", top_pos = 1, snp = character(0))
+#' empty_dataset_check(dataset = dataset_empty)
+#' # example with beta that should be TRUE
+#' dataset_empty <- list(pos = integer(0), MAF = numeric(0), N=1000, type ="quant", beta = numeric(0), varbeta = numeric(0), chr= "Z", imputation_class = "top", top_pos = 1, snp = character(0))
+#' empty_dataset_check(dataset = dataset_empty)
+
+empty_dataset_check <- function(dataset) {
+  (length(dataset$beta) == 0) & (length(dataset$pvalues) == 0)
+}

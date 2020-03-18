@@ -1,0 +1,63 @@
+#' Remove positions outside of window
+#'
+#' @param dataset_list
+#' list of POEM_output format dataset
+#' Specifically this is a coloc format dataset with the following changes
+#' top_pos giving the position of the top p-value
+#' pos vector giving positions
+#' chr giving chromosome
+#' snp is mandatory
+#' MAF is mandatory
+#' imputation class that is either all or top
+#' Unlike coloc, length of pvalues or beta L is permitted to be zero
+#' @param window_size
+#' non-negative integer giving the window around the top SNP to retain (setting to 1 will include 1 base on either side, not including the SNP itself)
+#' if set to NULL, will retain all positions
+#' @return
+#' @details
+#' keeps any positions within window size of any top SNP in dataset_list.
+#' in the event that the windows do not completely overlap, it retains all positions in between.
+#' @examples
+#' dataset_empty <- dataset_empty <- list(pos = integer(0), MAF = numeric(0), N=1000, type ="quant", pvalues = numeric(0), chr= "Z", imputation_class = "top", top_pos = 1, snp = character(0))
+#' dataset_empty2 <- list(pos = integer(0), MAF = numeric(0), N=1000, type ="quant", beta = numeric(0), varbeta = numeric(0), chr= "Z", imputation_class = "top", top_pos = 2, snp = character(0))
+#' # should warn
+#' position_filter(list(dataset_empty, dataset_empty2), window_size = NULL)
+#' # 2 empty sets should stay empty
+#' position_filter(list(dataset_empty, dataset_empty2), window_size = 10^10)
+#' # empty set and full set should be governed by full
+#' dataset_full <- list(pos = c(1, 2, 3, 4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 2 * 10^-4, 0.6, 0.03), chr= "Z", imputation_class = "all", top_pos = 1, snp = as.character(1:5))
+#' position_filter(list(dataset_empty, dataset_empty2, dataset_full), window_size = NULL)
+#' position_filter(list(dataset_empty, dataset_empty2, dataset_full), window_size = 1)
+#' position_filter(list(dataset_empty, dataset_empty2, dataset_full), window_size = 0)
+#' # Different top SNP positions should include everything in between them
+#' dataset_full2 <- list(pos = c(1, 2, 3, 4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(1, 4 * 10^-8, 2 * 10^-4, 0.6, 2 * 10^-8), chr= "Z", imputation_class = "all", top_pos = 5, snp = as.character(1:5))
+#' dataset_full3 <- list(pos = c(2, 3, 4), MAF = c(0.15, 0.25, 0.2), N=1000, type ="quant", pvalues = c(4 * 10^-8, 2 * 10^-4, 0.6), chr= "Z", imputation_class = "all", top_pos = 2, snp = as.character(2:4))
+#' position_filter(list(dataset_empty, dataset_empty2, dataset_full3, dataset_full2), window_size = 0)
+#' position_filter(list(dataset_empty, dataset_empty2, dataset_full3, dataset_full2), window_size = 10)
+#' # should warn
+#' dataset_top_SNP <- dataset_full
+#' dataset_top_SNP2 <- dataset_full2
+#' dataset_top_SNP$imputation_class = "top"
+#' dataset_top_SNP2$imputation_class = "top"
+#' position_filter(list(dataset_empty, dataset_empty2, dataset_top_SNP, dataset_top_SNP2), window_size = NULL)
+#' # should run without warning
+#' position_filter(list(dataset_empty, dataset_empty2, dataset_top_SNP, dataset_top_SNP2), window_size = 10)
+
+position_filter <- function(dataset_list, window_size) {
+  empty_check <- sapply(dataset_list, empty_dataset_check)
+  top_snp_pos <- sapply(dataset_list[!empty_check], function(x) x$top_pos)
+  imputation_class <- sapply(dataset_list[!empty_check], function(x) x$imputation_class)
+  if (all(imputation_class == "top")) {
+    if (is.null(window_size)) {
+      warning("Should specify window size if all datasets are top SNP")
+    }
+  }
+  if (!is.null(window_size)) {
+    for (i in which(!empty_check)) {
+      keep <- (dataset_list[[i]]$pos >= (min(top_snp_pos) - window_size)) & (dataset_list[[i]]$pos <= (max(top_snp_pos) + window_size))
+      dataset_list[[i]] <- dataset_filter(dataset_list[[i]], keep)
+    }
+  }
+  return(dataset_list)
+}
+

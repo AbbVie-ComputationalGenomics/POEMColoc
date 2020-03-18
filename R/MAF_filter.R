@@ -1,0 +1,35 @@
+#' Remove low minor allele frequency positions from dataset
+#'
+#' @param dataset
+#' POEM_output format dataset
+#' Specifically this is a coloc format dataset with the following changes
+#' top_pos giving the position of the top p-value
+#' pos vector giving positions
+#' chr giving chromosome
+#' snp is mandatory
+#' MAF is mandatory
+#' imputation class that is either all or top
+#' Unlike coloc, length of pvalues or beta L is permitted to be zero
+#' @param min_MAF
+#' minimum minor allele frequency to use
+#' @return
+#' POEM_output format dataset
+#' @examples
+#' # example with p-values
+#' dataset_full <- list(pos = c(1, 2, 3, 4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 2 * 10^-4, 0.6, 0.03), chr= "Z", imputation_class = "all", top_pos = 1, snp = as.character(1:5))
+#' MAF_filter(dataset = dataset_full, min_MAF = 0.1)
+#' MAF_filter(dataset = dataset_full, min_MAF = 0.2)
+#' # example that should warn
+#' dataset_full$MAF[2] <- 0.77
+#' MAF_filter(dataset = dataset_full, min_MAF = 0.1)
+#' # example with empty that should be TRUE
+#' dataset_empty <- list(pos = integer(0), MAF = numeric(0), N=1000, type ="quant", pvalues = numeric(0), chr= "Z", imputation_class = "all", top_pos = 1, snp = character(0))
+#' MAF_filter(dataset = dataset_empty, min_MAF = 0.1)
+
+MAF_filter <- function(dataset, min_MAF) {
+  if (any(dataset$MAF > 0.5)) {
+    warning("Minor allele frequency greater than 0.5 may produced undesired behavior")
+  }
+  keep <- dataset$MAF >= min_MAF
+  dataset_filter(dataset, keep)
+}

@@ -1,0 +1,16 @@
+Package: POEMColoc
+Type: Package
+Title: Implement POEM colocalization method
+Version: 1.0.0
+Author: Emily A King
+Maintainer: Emily A King <emily.king@abbvie.com>
+Description: This package implements the POEM method for colocalization.
+    The POEM method is an approximation to the coloc method that can be used when one or both datasets only have summary statistics for the top SNP.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2
+Depends:
+  R (>= 2.10),
+  coloc,
+  SeqArray
