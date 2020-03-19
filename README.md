@@ -3,7 +3,7 @@ Implements POEMColoc colocalization method described in King et al. 2020.  This 
 
 # Install
 
-Install dependencies
+From R install dependencies
 ```
 install.packages("coloc")
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -11,7 +11,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("SeqArray")
 ```
 
-Install POEMColoc
+From command line install POEMColoc
 ```
 git clone https://pig.abbvienet.com/kingea/POEMColoc-rpackage
 cd POEMColoc
