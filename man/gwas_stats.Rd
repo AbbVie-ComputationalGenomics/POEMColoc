@@ -11,12 +11,12 @@ A POEMColoc-formmated dataset containing a GWAS association.  Here, we do not ha
 \format{
   The format is:
 List of 6
- $ type   : chr "cc"
- $ pvalues: num 6e-09
- $ chr    : chr "19"
- $ pos    : int 10600418
- $ N      : int 86475
- $ s      : num 0.604
+ $ type   : "cc" or "quant" (here "cc")
+ $ pvalues: top SNP p-value
+ $ chr    : chromosome
+ $ pos    : position
+ $ N      : sample size
+ $ s      : case fraction
 }
 \details{
 %%  ~~ If necessary, more details than the __description__ above ~~

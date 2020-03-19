@@ -74,6 +74,10 @@ imputed_coloc_input <- function(dataset) {
       pos_keep <- (names(dataset$R2))[keep]
       # Ensure that MAF is also present for retained positions.
       pos_keep <- intersect(pos_keep, names(dataset$MAF[!is.na(dataset$MAF)]))
+      # Error will be obscure if you don't have N.  Give error if no N.
+      if (!"N" %in% names(dataset)) {
+        stop("N required for imputed datasets")
+      }
       imputed_summary_stats_pval <- list(type=dataset$type, sdY=dataset$sdY, MAF=dataset$MAF[pos_keep],
                                          pos=as.integer(pos_keep), pvalues=pt(-abs(point_est[pos_keep]), dataset$N) * 2,
                                          N=dataset$N, s=dataset$s, snp=pos_keep, chr=dataset$chr,
