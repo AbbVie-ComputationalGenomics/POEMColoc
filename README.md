@@ -16,15 +16,20 @@ data(MAF)
 Compute colocalization between the GWAS association and PDE4A whole blood eQTL.
 ```
 PDE4A <- eQTL_stats[["ENSG00000065989.11"]]
-POEMColoc(gwas_stats, PDE4A, R2= R2, MAF=MAF)
+PDE4A_coloc <- POEMColoc(gwas_stats, PDE4A, R2= R2, MAF=MAF)
+```
+Notice that we get a list of colocalization results available with one element.  We can look at the hypothesis posterior probabilities
+
+```
+PDE4A_coloc[[1]]$summary
 ```
 
 ### Colocalization for one GWAS dataset with multiple overlapping QTL
 POEMColoc can also accept a list of datasets as the second input.  Compute colocalization between the GWAS association and all overlapping QTL.
 ```
-POEMColoc(gwas_stats, eQTL_stats, R2= R2, MAF=MAF)
+all_coloc <- POEMColoc(gwas_stats, eQTL_stats, R2= R2, MAF=MAF)
 ```
-This approach does not improve computational time when we supply R2 and MAF to the function, but it's advantage when using a reference panel will be discussed in the following sections.
+We get back a list of colocalization results of the same length as eQTL_stats.  This approach does not improve computational time when we supply R2 and MAF to the function, but it's advantage when using a reference panel will be discussed in the following sections.
 
 ### Colocalization using a reference panel
 Download 1000 genomes reference panel for chromosome 19.  Also download sample info.
@@ -54,13 +59,12 @@ library(POEMColoc)
 data(gwas_stats)
 data(eQTL_stats)
 PDE4A <- eQTL_stats[["ENSG00000065989.11"]]
-POEMColoc(gwas_stats, PDE4A, gds_file = 'chr19.1kg.phase3.v5a.gds')
+PDE4A_coloc <- POEMColoc(gwas_stats, PDE4A, gds_file = 'chr19.1kg.phase3.v5a.gds')[[1]]$summary
 ```
-
 
 Colocalization of PDE4A using European-only reference panel.
 ```
-POEMColoc(gwas_stats, PDE4A, gds_file = 'chr19.1kg.phase3.v5a.gds', subset = 'eur_unrelateds.txt')
+PDE4A_coloc_eur <- POEMColoc(gwas_stats, PDE4A, gds_file = 'chr19.1kg.phase3.v5a.gds', subset = 'eur_unrelateds.txt')[[1]]$summary
 ```
 
 Colocalization of all overlapping whole blood eQTL using European reference panel.
@@ -83,5 +87,17 @@ time2 <- proc.time() - pt
 ```
 
 In general, as long as memory is not a problem, it is advantageous to compute colocalization for multiple molecular eQTL with the same GWAS locus with a single function call.
+
 ### Colocalization when neither dataset has full summary statistics
 
+To illustrate this feature we will artificially reduce the PDE4A eQTL dataset to a single position
+
+```
+top_pos_PDE4A <- which.max(abs(PDE4A$beta / sqrt(PDE4A$varbeta)))
+PDE4A_top <- list(beta = PDE4A$beta[top_pos_PDE4A], varbeta = PDE4A$varbeta[top_pos_PDE4A], pos = PDE4A$pos[top_pos_PDE4A], sdY = PDE4A$sdY, type =PDE4A$type, chr = PDE4A$chr)
+POEMColoc(gwas_stats, PDE4A_top, gds_file = 'chr19.1kg.phase3.v5a.gds', subset = 'eur_unrelateds.txt')[[1]]$summary
+```
+
+We can use multiple top SNP only datasets as well.
+
+Note that some of the colocalization results are NA because the top SNP was not found.
