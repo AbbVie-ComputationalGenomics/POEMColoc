@@ -4,14 +4,8 @@
 \alias{getSNP}
 \title{Get genotypes in region}
 \usage{
-getSNP(
-  gds_file,
-  chr,
-  start,
-  end,
-  subset = NULL,
-  get_dosage_fn = get_dosage_alt
-)
+getSNP(gds_file, chr, start, end, subset = NULL,
+  get_dosage_fn = get_dosage_alt)
 }
 \arguments{
 \item{gds_file}{Path to gds file}

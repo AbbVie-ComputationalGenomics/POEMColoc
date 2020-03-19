@@ -4,16 +4,8 @@
 \alias{add_R2_from_R2_MAF_check}
 \title{Harmonize R2 and MAF inputs}
 \usage{
-add_R2_from_R2_MAF_check(
-  dataset_list,
-  gds_file,
-  R2,
-  MAF,
-  subset,
-  window_size,
-  get_dosage_fn,
-  dataset_R2_condition
-)
+add_R2_from_R2_MAF_check(dataset_list, gds_file, R2, MAF, subset,
+  window_size, get_dosage_fn, dataset_R2_condition)
 }
 \arguments{
 \item{dataset_list}{list of datasets formatted according to the requirements of coloc.abf with the following differences

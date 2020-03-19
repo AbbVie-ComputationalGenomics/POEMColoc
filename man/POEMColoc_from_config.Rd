@@ -4,20 +4,10 @@
 \alias{POEMColoc_from_config}
 \title{Perform coloc analysis using imputed p-values}
 \usage{
-POEMColoc_from_config(
-  dataset_list,
-  config,
-  gds_file = NULL,
-  subset = NULL,
-  R2 = NULL,
-  MAF = NULL,
-  window_size = 10^6,
-  min_MAF = 0,
-  p1 = 10^-4,
-  p12 = 10^-5,
-  get_dosage_fn = get_dosage_alt,
-  flexible_input = TRUE
-)
+POEMColoc_from_config(dataset_list, config, gds_file = NULL,
+  subset = NULL, R2 = NULL, MAF = NULL, window_size = 10^6,
+  min_MAF = 0, p1 = 10^-4, p12 = 10^-5,
+  get_dosage_fn = get_dosage_alt, flexible_input = TRUE)
 }
 \arguments{
 \item{dataset_list}{list of datasets formatted according to the requirements of coloc.abf with the following differences

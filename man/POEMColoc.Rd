@@ -4,20 +4,10 @@
 \alias{POEMColoc}
 \title{Perform coloc analysis using imputed p-values}
 \usage{
-POEMColoc(
-  dataset,
-  dataset_list,
-  gds_file = NULL,
-  R2 = NULL,
-  MAF = NULL,
-  subset = NULL,
-  window_size = NULL,
-  min_MAF = 0,
-  p1 = 10^-4,
-  p2 = 10^-4,
-  p12 = 10^-5,
-  dosage_method = "dosage_alt"
-)
+POEMColoc(dataset, dataset_list, gds_file = NULL, R2 = NULL,
+  MAF = NULL, subset = NULL, window_size = NULL, min_MAF = 0,
+  p1 = 10^-4, p2 = 10^-4, p12 = 10^-5,
+  dosage_method = "dosage_alt")
 }
 \arguments{
 \item{dataset}{single dataset formatted according to the requirements of coloc.abf with the following differences
@@ -77,4 +67,71 @@ Note that user-supplied R2 and MAF will take priority over gds file.
 dosage_method is designed to support different gds input possibilities.
 'dosage' will compute reference allele dosage, 'dosage_alt' will compute dosages of alternative allele, imputed_dosage will use 'annotation/format/DS' to get the dosage.
 note that not all gds files will have all nodes available, so choose an option that is compatible with the gds_file supplied.
+}
+\examples{
+# Example using R2 input mode
+dataset_full <- list(pos = c(1, 2, 3, 4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 2 * 10^-4, 0.6, 0.03), chr= "Z")
+dataset_top_SNP <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z")
+R2 <- matrix(data = c(0.94, 1, 0.65, 0, 0.51, 0.32, 0.64, 0.65, 1, 0, 0.21, 0.12), nrow=2, byrow=TRUE)
+colnames(R2) <- 1:6
+rownames(R2) <- 2:3
+MAF = c(0.14, 0.15, 0.25, 0.2, 0.4, 0.25)
+names(MAF) <- 1:6
+POEMColoc(dataset_top_SNP, dataset_full, gds_file = NULL, R2 = R2, MAF = MAF, subset=NULL)
+# Example using R2 input mode and dataset_full is a list
+dataset_full2 <- list(pos = c(1, 3, 4, 6), MAF = c(0.14, 0.25, 0.2, 0.25), type = "quant", pvalues = c(3 * 10^-4, 2 * 10^-8, 0.8, 0.03), N =350, chr= "Z")
+dataset_full3 <- list(pos = c(1,4,5), MAF = c(0.14, 0.2, 0.4), type = "quant", pvalues = c(0.81, 10^-6, 0.97), N =350, chr= "Z")
+POEMColoc(dataset_top_SNP, list(dataset_full, dataset_full2, dataset_full3), gds_file = NULL, R2 = R2, subset=NULL, MAF = MAF)
+# Example with two top SNP
+dataset_top_SNP2 <- list(pos = 3, type= "quant", pvalues =2*10^-8, N = 350, chr = "Z")
+POEMColoc(dataset_top_SNP, dataset_top_SNP2, gds_file = NULL, R2 = R2, subset=NULL, MAF = MAF)
+# Example with a mix of top SNP and SNP
+POEMColoc(dataset_top_SNP, list(dataset_full, dataset_top_SNP2, dataset_full3), gds_file = NULL, R2 = R2, subset=NULL, MAF = MAF)
+# Example using min_MAF: should use 3 SNPs
+POEMColoc(dataset_top_SNP, dataset_full, gds_file = NULL, R2 = R2, MAF = MAF, subset=NULL, min_MAF=0.2)
+# Example using min_MAF: should return NA because no SNPs meet filter
+POEMColoc(dataset_top_SNP, dataset_full, gds_file = NULL, R2 = R2, MAF = MAF, subset=NULL, min_MAF=0.5)
+# Example using beta and varbeta
+dataset_full_beta_varbeta = dataset_full
+dataset_full_beta_varbeta$pvalues = NULL
+dataset_full_beta_varbeta$beta = c(0.5, 0.5, 0.4, 0.5, 0.26)
+dataset_full_beta_varbeta$varbeta = c(0.008, 0.008, 0.012, 0.01, 0.015)
+dataset_full_beta_varbeta$sdY = 1
+POEMColoc(dataset_top_SNP, dataset_full_beta_varbeta, gds_file = NULL, R2 = R2, MAF = MAF, subset=NULL)
+# Example that should reduce to full coloc assuming pos is snp.
+POEMColoc(dataset_full, dataset_full)
+# Window size should also apply to datasets without top SNP
+POEMColoc(dataset_full, dataset_full, window_size = 1)
+# Example of changing prior from coloc default
+POEMColoc(dataset_top_SNP, dataset_full, gds_file = NULL, R2 = R2, MAF = MAF, subset=NULL, p1 = 10^-6, p2 =10^-6, p12 = 10^-7)
+# Example with full dataset colocalized against top SNP
+POEMColoc(dataset = dataset_full_beta_varbeta, list(dataset_top_SNP, dataset_top_SNP2), R2=R2, MAF=MAF)
+# Example using gds_file input mode
+gds_file <- system.file("extdata", "example.gds", package = "POEMColoc")
+subset <- system.file("extdata", "subset.ped", package = "POEMColoc")
+POEMColoc(dataset_top_SNP, dataset_full, gds_file = gds_file)
+# Example using gds_file input mode with subset
+POEMColoc(dataset_top_SNP, dataset_full, gds_file = gds_file, subset = subset)
+# Example using gds_file input mode and dataset_full is a list
+POEMColoc(dataset_top_SNP, list(dataset_full, dataset_full2, dataset_full3), gds_file = gds_file)
+# Example that should return NA because the top SNP is not in the file
+dataset_top_SNP_missing <- list(pos = 8, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z")
+POEMColoc(dataset_top_SNP_missing, dataset_full, gds_file = gds_file)
+# Example that should return NA because none of the SNPs are in the file
+dataset_full_missing <- list(pos = c(7,8,9), MAF = c(0.14, 0.2, 0.4), type = "quant", pvalues = c(0.81, 10^-6, 0.97), N =350, chr= "Z")
+POEMColoc(dataset_top_SNP_missing, dataset_full_missing, gds_file = gds_file)
+# Example that should still work because some eQTL SNPs are in the file and the top SNP is in the file
+dataset_partial_missing <- list(pos = c(1,2,9), MAF = c(0.14, 0.2, 0.4), type = "quant", pvalues = c(0.81, 10^-6, 0.97), N =350, chr= "Z")
+POEMColoc(dataset_top_SNP, dataset_partial_missing, gds_file = gds_file)
+# Example with two top SNP
+POEMColoc(dataset_top_SNP, dataset_top_SNP2, gds_file = gds_file, window_size = 2)
+POEMColoc(dataset_top_SNP, dataset_top_SNP2, gds_file = gds_file, window_size = NULL)
+# Example with a mix of top SNP and SNP
+POEMColoc(dataset_top_SNP, list(dataset_full, dataset_top_SNP2, dataset_full3), gds_file = gds_file, window_size = 3)
+# Same example reducing window size
+POEMColoc(dataset_top_SNP, list(dataset_full, dataset_top_SNP2, dataset_full3), gds_file = gds_file, window_size = 1)
+# Example using min_MAF
+POEMColoc(dataset_top_SNP, dataset_full, gds_file = gds_file, min_MAF = 0.3)
+# Example using min_MAF that should return NA
+POEMColoc(dataset_top_SNP, dataset_full, gds_file = gds_file, min_MAF = 0.5)
 }

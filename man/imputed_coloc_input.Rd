@@ -19,21 +19,6 @@ if imputation class is top
 -MAF which is either a named vector with names being snp of length P or NA
 if imputation class is 'all'
 -vector MAF of length L}
-
-\item{gds_file}{path to a gds file for the reference panel.  Can be NULL if specifying R2 and MAF, or if supplying within dataset.}
-
-\item{subset}{optional parameter that is the path to a file giving the names of samples to include as formatted in the gds file or vcf from which it came.  each line should be the name of a sample.}
-
-\item{R2}{A matrix of R2 LD between SNP positions.  This should contain LD information for top SNPs in rows and LD for positions to be imputed in columns.  Can be NULL if specifying gds_file or if included in individual datasets.
-Column and row names should be position.}
-
-\item{MAF}{optional input of minor allele frequencies.
-Will also be used for full summary statistic datasets if not specified within the dataset.}
-
-\item{window_size}{It is required if there are two top SNP datasets.
-Default NULL will impute all positions present in the full datasets.
-It should not be NULL if all datasets are top SNP datasets as this will impute everything between the two top SNPs only.
-Otherwise, for each pairwise colocalization, only SNPs within window size of one of their top SNPs will be included, including all SNPs between them if disjoint.}
 }
 \value{
 POEM_output format dataset

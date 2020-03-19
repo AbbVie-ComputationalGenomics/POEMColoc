@@ -18,7 +18,6 @@
 #' @return
 #' a string giving the source of R2 and MAF
 #' @examples
-#' \dontrun{
 #' R2_matrix <- matrix(data = c(1,0.5,0.5,1), nrow=2, ncol=2)
 #' rownames(R2_matrix) <- 1:2
 #' colnames(R2_matrix) <- 1:2
@@ -26,7 +25,7 @@
 #' names(R2_vec) <- 1:2
 #' MAF <- c(0.1, 0.2)
 #' names(MAF) <- 1:2
-#' gds_file = "data/example.gds"
+#' gds_file <- system.file("extdata", "example.gds", package = "POEMColoc")
 #' dataset_full <- list(pos = c(1, 2), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8), chr= "Z", snp = c("1","2"), imputation_class = "all")
 #' dataset_top_SNP <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", snp = c("2"), imputation_class = "top")
 #' par_mat <- expand.grid(type = c("top", "all"), R2 = c("dataset", "both", "function", "none"), MAF = c("dataset", "both", "function", "none"), gds = c("dataset", "both", "function", "none"), stringsAsFactors=FALSE)
@@ -76,7 +75,7 @@
 #' is_error <- grepl("Error", result_summary)
 #' cbind(par_mat[is_error,], err = result_summary[is_error])
 #' cbind(par_mat[!is_error,], res = result_summary[!is_error])
-#' }
+
 R2_MAF_check_dataset <- function(dataset, gds_file, R2, MAF) {
   MAF_condition <- check_input_condition(dataset$MAF, MAF)
   if (dataset$imputation_class == "all") {

@@ -20,9 +20,6 @@ Unlike coloc, length of pvalues or beta L is permitted to be zero}
 \item{window_size}{non-negative integer giving the window around the top SNP to retain (setting to 1 will include 1 base on either side, not including the SNP itself)
 if set to NULL, will retain all positions}
 }
-\value{
-
-}
 \description{
 Remove positions outside of window
 }

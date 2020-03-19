@@ -4,15 +4,8 @@
 \alias{add_R2_to_dataset_list_function_input_only}
 \title{Harmonize R2 and MAF inputs}
 \usage{
-add_R2_to_dataset_list_function_input_only(
-  dataset_list,
-  gds_file,
-  R2,
-  MAF,
-  subset,
-  window_size,
-  get_dosage_fn = get_dosage_alt
-)
+add_R2_to_dataset_list_function_input_only(dataset_list, gds_file, R2, MAF,
+  subset, window_size, get_dosage_fn = get_dosage_alt)
 }
 \arguments{
 \item{dataset_list}{list of datasets formatted according to the requirements of coloc.abf with the following differences
@@ -44,48 +37,4 @@ to individuals and columns to positions.}
 }
 \description{
 Harmonize R2 and MAF inputs
-}
-\examples{
-# R2 and MAF from function
-dataset_top_SNP <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2")
-dataset_full <- list(pos = c(1, 2, 4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 0.01), chr= "Z", snp = c("1","2","4"), imputation_class = "all", MAF = c(0.2,0.4, 0.3))
-R2 <- matrix(data = c(0.94, 1, 0.65, 0, 0.51, 0.32, 0.64, 0.65, 1, 0, 0.21, 0.12), nrow=2, byrow=TRUE)
-colnames(R2) <- 1:6
-rownames(R2) <- 2:3
-MAF = c(0.14, 0.15, 0.25, 0.2, 0.4, 0.25)
-names(MAF) <- 1:6
-add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP), R2 = R2, MAF = MAF, subset = NULL, window_size= 2, gds_file=NULL)
-# R2 and MAF from function some positions missing from to impute
-add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP), R2 = R2[,c("1","2")], MAF = MAF[c("1","2")], subset = NULL, window_size= 2, gds_file=NULL)
-add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP), R2 = R2[,c("1","2")], MAF = MAF[c("2")], subset = NULL, window_size= 2, gds_file=NULL)
-# R2 and MAF from function top position missing
-add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP), R2 = R2[c("3"),,drop=FALSE], MAF = MAF, subset = NULL, window_size= 2, gds_file=NULL)
-# R2 and MAF from input: should give error
-dataset_top_SNP2 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2", R2=R2, MAF=MAF)
-try(add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP2), gds_file = NULL, subset = NULL, R2 = NULL, MAF = NULL, window_size= 2))
-# should warn
-try(add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP3), gds_file = NULL, subset = NULL, R2 = R2, MAF = MAF, window_size= 2))
-# should run
-try(add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_full), gds_file = NULL, subset = NULL, R2 = NULL, MAF = NULL, window_size= 2))
-\dontrun{
-# R2 and MAF from gds function
-dataset_top_SNP5 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2")
-add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP5), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 2)
-add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP5), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 3)
-# R2 and MAF from gds function some positions missing
-dataset_full2 <- list(pos = c(1, 2, 7), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 0.01), chr= "Z", snp = c("1","2","7"), imputation_class = "all", MAF = c(0.2,0.4, 0.3))
-add_R2_to_dataset_list_function_input_only(list(dataset_full2, dataset_top_SNP5), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 1)
-# R2 and MAF should come from function not dataset and it should warn
-dataset_top_SNP6 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2", gds_file = "data/example.gds")
-add_R2_to_dataset_list_function_input_only(list(dataset_full2, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 1)
-# MAF from function should fail for full summary statistics - not supported
-dataset_full3 <- list(pos = c(1, 2, 4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 0.01), chr= "Z", snp = c("1","2","4"), imputation_class = "all")
-try(add_R2_to_dataset_list_function_input_only(list(dataset_full3, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = MAF, window_size= 1))
-# Should fail due to missing MAF
-dataset_full4 <- list(pos = c(1, 2, 7), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 0.01), chr= "Z", snp = c("1","2","7"), imputation_class = "all")
-try(add_R2_to_dataset_list(list(dataset_full4, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 1))
-# Same datasets in a list
-add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP, dataset_top_SNP2, dataset_top_SNP5, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = R2, MAF = MAF, window_size= 3)
-add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP, dataset_top_SNP2, dataset_top_SNP5, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', window_size= 3, MAF = NULL, R2 = NULL)
-}
 }

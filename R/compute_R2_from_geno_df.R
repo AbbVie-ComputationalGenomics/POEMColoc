@@ -1,3 +1,13 @@
+#' Given output from getSNP, compute the R2 and MAF
+#'
+#' @param gdsout 
+#' output from getSNP
+#' @param dataset 
+#' must have top_pos giving the top SNP position in dataset
+#' @return
+#' @export
+#'
+#' @examples
 compute_R2_MAF_from_geno_df <- function(gdsout, dataset) {
   if (is.null(gdsout$genotype)) {
     R2 <- NA
@@ -13,7 +23,7 @@ compute_R2_MAF_from_geno_df <- function(gdsout, dataset) {
     keep <- keep & variable_sites
     geno_matrix <- gdsout$genotype[,keep,drop=FALSE]
     pos <- gdsout$pos[keep]
-    top_SNP_pos <- dataset$pos
+    top_SNP_pos <- dataset$top_pos
     top_SNP_index <- which(pos == top_SNP_pos)
     if (length(top_SNP_index) == 1) {
       R2 <- as.numeric(cor(as.numeric(geno_matrix[,top_SNP_index]), (geno_matrix))^2)

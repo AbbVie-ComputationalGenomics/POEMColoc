@@ -27,10 +27,14 @@
 #' get_start_and_end_pos(list(dataset_top_SNP2, dataset_full), 2)
 #' get_start_and_end_pos(list(dataset_top_SNP, dataset_full), 2)
 #' # More complex example
+#' gds_file <- system.file("extdata", "example.gds", package = "POEMColoc")
+#' gds_file2 <- system.file("extdata", "example2.gds", package = "POEMColoc")
+#' subset <- system.file("extdata", "subset.ped", package = "POEMColoc")
+#' subset2 <- system.file("extdata", "subset2.ped", package = "POEMColoc")
 #' dataset_full2 <- list(pos = c(1, 2, 3, 4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 2 * 10^-4, 0.6, 0.03), chr= "Z", top_pos = 1, imputation_class = 'all', snp=as.character(1:5))
-#' dataset_top_SNP3 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", top_pos =2, imputation_class = 'top', snp='2', gds_file = "data/example.gds", subset = "data/subset.ped")
-#' dataset_top_SNP4 <- list(pos = 3, type= "quant", pvalues =2*10^-8, N = 350, chr = "Z", top_pos= 2, imputation_class = 'top', snp='3', gds_file = "data/example.gds", subset = 'data/subset2.ped')
-#' dataset_top_SNP5 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", top_pos =2, imputation_class = 'top', snp='2', gds_file = "data/example2.gds", subset = 'data/subset.ped')
+#' dataset_top_SNP3 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", top_pos =2, imputation_class = 'top', snp='2', gds_file = gds_file, subset = subset)
+#' dataset_top_SNP4 <- list(pos = 3, type= "quant", pvalues =2*10^-8, N = 350, chr = "Z", top_pos= 2, imputation_class = 'top', snp='3', gds_file = gds_file, subset = subset2)
+#' dataset_top_SNP5 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", top_pos =2, imputation_class = 'top', snp='2', gds_file = gds_file2, subset = subset)
 #' get_start_and_end_pos(list(dataset_full2, dataset_top_SNP3, dataset_top_SNP4, dataset_top_SNP5), window_size = 1)
 get_start_and_end_pos <- function(dataset_list, window_size) {
   start_pos <- Inf

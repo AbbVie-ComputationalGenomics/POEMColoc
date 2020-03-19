@@ -49,26 +49,27 @@
 #' try(add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP3), gds_file = NULL, subset = NULL, R2 = R2, MAF = MAF, window_size= 2))
 #' # should run
 #' try(add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_full), gds_file = NULL, subset = NULL, R2 = NULL, MAF = NULL, window_size= 2))
-#' \dontrun{
-#' # R2 and MAF from gds function
+#' # R2 and MAF from gds
+#' gds_file <- system.file("extdata", "example.gds", package = "POEMColoc")
+#' subset2 <- system.file("extdata", "subset2.ped", package = "POEMColoc")
 #' dataset_top_SNP5 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2")
-#' add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP5), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 2)
-#' add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP5), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 3)
+#' add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP5), gds_file = gds_file, subset = subset2, R2 = NULL, MAF = NULL, window_size= 2)
+#' add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP5), gds_file = gds_file, subset = subset2, R2 = NULL, MAF = NULL, window_size= 3)
 #' # R2 and MAF from gds function some positions missing
 #' dataset_full2 <- list(pos = c(1, 2, 7), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 0.01), chr= "Z", snp = c("1","2","7"), imputation_class = "all", MAF = c(0.2,0.4, 0.3))
-#' add_R2_to_dataset_list_function_input_only(list(dataset_full2, dataset_top_SNP5), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 1)
+#' add_R2_to_dataset_list_function_input_only(list(dataset_full2, dataset_top_SNP5), gds_file = gds_file, subset = subset2, R2 = NULL, MAF = NULL, window_size= 1)
 #' # R2 and MAF should come from function not dataset and it should warn
-#' dataset_top_SNP6 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2", gds_file = "data/example.gds")
-#' add_R2_to_dataset_list_function_input_only(list(dataset_full2, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 1)
+#' dataset_top_SNP6 <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2", gds_file = gds_file)
+#' add_R2_to_dataset_list_function_input_only(list(dataset_full2, dataset_top_SNP6), gds_file = gds_file, subset = subset2, R2 = NULL, MAF = NULL, window_size= 1)
 #' # MAF from function should fail for full summary statistics - not supported
 #' dataset_full3 <- list(pos = c(1, 2, 4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 0.01), chr= "Z", snp = c("1","2","4"), imputation_class = "all")
-#' try(add_R2_to_dataset_list_function_input_only(list(dataset_full3, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = MAF, window_size= 1))
+#' try(add_R2_to_dataset_list_function_input_only(list(dataset_full3, dataset_top_SNP6), gds_file = gds_file, subset = subset2, R2 = NULL, MAF = MAF, window_size= 1))
 #' # Should fail due to missing MAF
 #' dataset_full4 <- list(pos = c(1, 2, 7), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 0.01), chr= "Z", snp = c("1","2","7"), imputation_class = "all")
-#' try(add_R2_to_dataset_list(list(dataset_full4, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = NULL, MAF = NULL, window_size= 1))
+#' try(add_R2_to_dataset_list(list(dataset_full4, dataset_top_SNP6), gds_file = gds_file, subset = subset2, R2 = NULL, MAF = NULL, window_size= 1))
 #' # Same datasets in a list
-#' add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP, dataset_top_SNP2, dataset_top_SNP5, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', R2 = R2, MAF = MAF, window_size= 3)
-#' add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP, dataset_top_SNP2, dataset_top_SNP5, dataset_top_SNP6), gds_file = 'data/example.gds', subset = 'data/subset2.ped', window_size= 3, MAF = NULL, R2 = NULL)
+#' add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP, dataset_top_SNP2, dataset_top_SNP5, dataset_top_SNP6), gds_file = gds_file, subset = subset2, R2 = R2, MAF = MAF, window_size= 3)
+#' add_R2_to_dataset_list_function_input_only(list(dataset_full, dataset_top_SNP, dataset_top_SNP2, dataset_top_SNP5, dataset_top_SNP6), gds_file = gds_file, subset = subset2, window_size= 3, MAF = NULL, R2 = NULL)
 #' }
 add_R2_to_dataset_list_function_input_only <- function(dataset_list, gds_file, R2, MAF, subset, window_size, get_dosage_fn = get_dosage_alt) {
   if (any(sapply(dataset_list, function(x) "R2" %in% names(x) | "gds_file" %in% names(x) | "subset" %in% names(x)))) {

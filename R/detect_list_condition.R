@@ -1,3 +1,11 @@
+#' Title
+#'
+#' @param dataset 
+#' POEMColoc input dataset
+#' @return
+#' TRUE if a list of datasets, FALSE if a single dataset
+#'
+#' @examples
 detect_list_condition <- function(dataset) {
   if (!is.list(dataset)) {
     return(FALSE)

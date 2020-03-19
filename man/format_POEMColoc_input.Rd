@@ -4,16 +4,8 @@
 \alias{format_POEMColoc_input}
 \title{Given arguments to POEMColoc, convert input to standardized format for imputation step.}
 \usage{
-format_POEMColoc_input(
-  dataset_list,
-  gds_file,
-  R2,
-  MAF,
-  subset,
-  window_size,
-  get_dosage_fn = get_dosage_alt,
-  flexible_input = TRUE
-)
+format_POEMColoc_input(dataset_list, gds_file, R2, MAF, subset,
+  window_size, get_dosage_fn = get_dosage_alt, flexible_input = TRUE)
 }
 \arguments{
 \item{dataset_list}{list of datasets formatted according to the requirements of coloc.abf with the following differences
@@ -40,6 +32,10 @@ if specified, covers all positions in dataset list plus window_size around top S
 a matrix with the genotype or imputed dosage at each position.  The function
 should not perform any filtering or reordering of variants.  rows must correspond
 to individuals and columns to positions.}
+
+\item{flexible_input}{if TRUE allows specifying gds_file and R2 by dataset.  if FALSE will only use function inputs.
+the latter way to input has been better tested.  Further, it is not so clear if one ought to
+attempt to colocalize things with divergent LD backgrounds.}
 }
 \value{
 POEM_input format dataset

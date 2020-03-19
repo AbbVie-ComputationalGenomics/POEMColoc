@@ -93,11 +93,9 @@
 #' POEMColoc(dataset_top_SNP, dataset_full, gds_file = NULL, R2 = R2, MAF = MAF, subset=NULL, p1 = 10^-6, p2 =10^-6, p12 = 10^-7)
 #' # Example with full dataset colocalized against top SNP
 #' POEMColoc(dataset = dataset_full_beta_varbeta, list(dataset_top_SNP, dataset_top_SNP2), R2=R2, MAF=MAF)
-#' }
 #' # Example using gds_file input mode
-#' \dontrun{
-#' gds_file <- "data/example.gds"
-#' subset <- "data/subset.ped"
+#' gds_file <- system.file("extdata", "example.gds", package = "POEMColoc")
+#' subset <- system.file("extdata", "subset.ped", package = "POEMColoc")
 #' POEMColoc(dataset_top_SNP, dataset_full, gds_file = gds_file)
 #' # Example using gds_file input mode with subset
 #' POEMColoc(dataset_top_SNP, dataset_full, gds_file = gds_file, subset = subset)
@@ -123,7 +121,6 @@
 #' POEMColoc(dataset_top_SNP, dataset_full, gds_file = gds_file, min_MAF = 0.3)
 #' # Example using min_MAF that should return NA
 #' POEMColoc(dataset_top_SNP, dataset_full, gds_file = gds_file, min_MAF = 0.5)
-#' }
 
 POEMColoc <- function(dataset, dataset_list, gds_file = NULL, R2 = NULL, MAF=NULL, subset=NULL, window_size=NULL, min_MAF = 0, p1 = 10^-4, p2 =10^-4, p12 = 10^-5, dosage_method = 'dosage_alt') {
   if (!detect_list_condition(dataset_list)) {

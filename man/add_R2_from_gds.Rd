@@ -4,12 +4,8 @@
 \alias{add_R2_from_gds}
 \title{Compute R2 from gds input}
 \usage{
-add_R2_from_gds(
-  dataset_list,
-  dataset_R2_condition,
-  window_size,
-  get_dosage_fn = get_dosage_alt
-)
+add_R2_from_gds(dataset_list, dataset_R2_condition, window_size,
+  get_dosage_fn = get_dosage_alt)
 }
 \arguments{
 \item{dataset_list}{list of datasets formatted according to the requirements of coloc.abf with the following differences
@@ -37,31 +33,33 @@ a list of datasets, in which any dataset with dataset_R2_condition containing gd
 Compute R2 from gds input
 }
 \examples{
-\dontrun{
+gds_file <- system.file("extdata", "example.gds", package = "POEMColoc")
+gds_file2 <- system.file("extdata", "example2.gds", package = "POEMColoc")
+subset <- system.file("extdata", "subset.ped", package = "POEMColoc")
+subset2 <- system.file("extdata", "subset2.ped", package = "POEMColoc")
 dataset_top_SNP <- list(pos = 2, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=2, snp="2")
 dataset_top_SNP2 <- list(pos = 4, N= 10000, s =0.5, type="cc", pvalues = 10^-9, chr = "Z", imputation_class = "top", top_pos=4, snp="4")
 dataset_full <- list(pos = c(1, 2, 3, 4, 5), MAF = c(0.14, 0.15, 0.25, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 2 * 10^-4, 0.6, 0.03), chr= "Z", top_pos = 1, imputation_class = "all", snp = as.character(1:5))
 # Example in which gds file is not used
 add_R2_from_gds(list(dataset_top_SNP, dataset_top_SNP, dataset_full), c('R2 from function', 'R2 from function', 'none'), 1)
 # Example in which there is a single gds file and no subsets
-add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = "data/example.gds")), c(dataset_top_SNP2, list(gds_file = "data/example.gds")), dataset_full),
+add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = gds_file)), c(dataset_top_SNP2, list(gds_file = gds_file)), dataset_full),
 c('gds from dataset', 'gds from function', 'none'), 1)
 # Example with multiple gds files
-add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = "data/example.gds")), c(dataset_top_SNP2, list(gds_file = "data/example2.gds")), dataset_full),
+add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = gds_file)), c(dataset_top_SNP2, list(gds_file = gds_file2)), dataset_full),
 c('gds from dataset', 'gds from function', 'none'), 1)
 # Example with one gds file and multiple subsets.  Note it only selects the variants once.
-add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = "data/example.gds", subset = "data/subset.ped")),
-c(dataset_top_SNP2, list(gds_file = "data/example.gds", subset = 'data/subset2.ped')), dataset_full),
+add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = gds_file, subset = subset)),
+c(dataset_top_SNP2, list(gds_file = gds_file, subset = subset2)), dataset_full),
 c('gds from dataset', 'gds from function', 'none'), 1)
 # Example with single subset and single gds file.  Note in this case it only selects the subset from the gds.
-add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = "data/example.gds", subset = "data/subset.ped")),
-c(dataset_top_SNP2, list(gds_file = "data/example.gds", subset = 'data/subset.ped')), dataset_full),
+add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = gds_file, subset = subset)),
+c(dataset_top_SNP2, list(gds_file = gds_file, subset = subset)), dataset_full),
 c('gds from dataset', 'gds from function', 'none'), 1)
 #Example in which the gds file does not have one of the needed positions
 dataset_full2 <- list(pos = 1:7, MAF = c(0.14, 0.15, 0.25, 0.2, 0.4, 0.2, 0.4), N=1000, type ="quant", pvalues = c(2 * 10^-8, 4 * 10^-8, 2 * 10^-4, 0.6, 0.03, 0.1, 0.2), chr= "Z", top_pos = 1, imputation_class = "all", snp = as.character(1:7))
-add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = "data/example.gds", subset = "data/subset.ped")),
-c(dataset_top_SNP2, list(gds_file = "data/example.gds", subset = 'data/subset.ped')),
-c(dataset_top_SNP2, list(gds_file = "data/example.gds", subset = 'data/subset2.ped')), dataset_full, dataset_full2),
+add_R2_from_gds(list(c(dataset_top_SNP, list(gds_file = gds_file, subset = subset)),
+c(dataset_top_SNP2, list(gds_file = gds_file, subset = subset)),
+c(dataset_top_SNP2, list(gds_file = gds_file, subset = subset2)), dataset_full, dataset_full2),
 c('gds from dataset', 'gds from function', 'gds from function', 'none', 'none'), 1)
-}
 }
