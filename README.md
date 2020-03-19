@@ -1,6 +1,24 @@
 # POEMColoc-rpackage
 Implements POEMColoc colocalization method described in King et al. 2020.  This method is based on the coloc R package, but takes as input datasets that may have full summary statistics, or may have summary statistics for a single top SNP.
 
+# Install
+
+Install dependencies
+```
+install.packages("coloc")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("SeqArray")
+```
+
+Install POEMColoc
+```
+git clone https://pig.abbvienet.com/kingea/POEMColoc-rpackage
+cd POEMColoc
+R CMD build POEMColoc
+R CMD INSTALL POEMColoc_1.0.0.tar.gz
+```
+
 # Vignette
 ### Datasets
 We have supplied example GWAS Catalog and GTEx eQTL datasets in this R package.  The GWAS Catalog dataset comes from one row of the GWAS Catalog reporting a pleiotropic locus on chromosome 19 for multiple chronic inflammatory diseases from Ellighaus et al. Nature Genetics.  The eQTL dataset is from GTEx whole blood eQTL for genes with summary statistics overlapping this locus.  We have provided LD and minor allele frequency for these samples, and then later show how to do the same analysis using a reference panel.
