@@ -29,7 +29,11 @@ POEMColoc can also accept a list of datasets as the second input.  Compute coloc
 ```
 all_coloc <- POEMColoc(gwas_stats, eQTL_stats, R2= R2, MAF=MAF)
 ```
-We get back a list of colocalization results of the same length as eQTL_stats.  This approach does not improve computational time when we supply R2 and MAF to the function, but it's advantage when using a reference panel will be discussed in the following sections.
+We get back a list of colocalization results of the same length as eQTL_stats.  This approach does not improve computational time when we supply R2 and MAF to the function, but it's advantage when using a reference panel will be discussed in the following sections.  We can extract colocalization probabilties by gene like this
+
+```
+sapply(all_coloc, function(x) x$summary["PP.H4.abf"])
+```
 
 ### Colocalization using a reference panel
 Download 1000 genomes reference panel for chromosome 19.  Also download sample info.
@@ -90,14 +94,30 @@ In general, as long as memory is not a problem, it is advantageous to compute co
 
 ### Colocalization when neither dataset has full summary statistics
 
-To illustrate this feature we will artificially reduce the PDE4A eQTL dataset to a single position
+To illustrate this feature we will artificially reduce the PDE4A eQTL dataset to a single position.  We specify a window size around either top SNP to impute.
 
 ```
 top_pos_PDE4A <- which.max(abs(PDE4A$beta / sqrt(PDE4A$varbeta)))
-PDE4A_top <- list(beta = PDE4A$beta[top_pos_PDE4A], varbeta = PDE4A$varbeta[top_pos_PDE4A], pos = PDE4A$pos[top_pos_PDE4A], sdY = PDE4A$sdY, type =PDE4A$type, chr = PDE4A$chr)
-POEMColoc(gwas_stats, PDE4A_top, gds_file = 'chr19.1kg.phase3.v5a.gds', subset = 'eur_unrelateds.txt')[[1]]$summary
+PDE4A_top <- list(beta = PDE4A$beta[top_pos_PDE4A], varbeta = PDE4A$varbeta[top_pos_PDE4A], pos = PDE4A$pos[top_pos_PDE4A], sdY = PDE4A$sdY, type =PDE4A$type, chr = PDE4A$chr, N = PDE4A$N)
+PDE4A_POEMColoc2 <- POEMColoc(gwas_stats, PDE4A_top, gds_file = 'chr19.1kg.phase3.v5a.gds', subset = 'eur_unrelateds.txt', window_size = 10^4)[[1]]$summary
+```
+In this case, the estimate is close to what we obtained before.
+We can use multiple top SNP only datasets as well.
+```
+eQTL_top_only <- lapply(eQTL_stats, function(x) 
+  {ii <- which.max(abs(x$beta / sqrt(x$varbeta))); list(beta = x$beta[ii], varbeta = x$varbeta[ii], 
+                                                        pos = x$pos[ii], chr=x$chr, sdY=x$sdY, type=x$type, N=x$N)})
+POEMColoc2_all <- POEMColoc(gwas_stats, eQTL_top_only, gds_file = 'chr19.1kg.phase3.v5a.gds', subset = 'eur_unrelateds.txt', window_size = 10^4)
 ```
 
-We can use multiple top SNP only datasets as well.
+Note that some of the colocalization results are NA because the top SNP was not found.  We can extract colocalization probabiltiies by gene like this
 
-Note that some of the colocalization results are NA because the top SNP was not found.
+```
+sapply(POEMColoc2_all, function(x) ifelse(isTRUE(all.equal(x, NA)), NA, x$summary["PP.H4.abf"]))
+```
+
+Using the output from earlier in the vignette, we could compare what we get using one and two top-SNP only datasets (POEMColoc-1 and POEMColoc-2)
+
+```
+summary(sapply(all_coloc, function(x) x$summary["PP.H4.abf"]) - sapply(POEMColoc2_all, function(x) ifelse(isTRUE(all.equal(x, NA)), NA, x$summary["PP.H4.abf"])))
+```
